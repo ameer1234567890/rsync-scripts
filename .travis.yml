@@ -1,0 +1,9 @@
+sudo: false
+language: bash
+os:
+  - linux
+install:
+  - shellcheck --version
+script:
+  - shellcheck $TRAVIS_BUILD_DIR/sync.sh
+  - shellcheck $TRAVIS_BUILD_DIR/syncin.sh
