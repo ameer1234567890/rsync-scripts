@@ -4,6 +4,9 @@ os:
   - linux
 install:
   - shellcheck --version
+  - go get -u mvdan.cc/sh/cmd/shfmt
 script:
   - shellcheck $TRAVIS_BUILD_DIR/sync.sh
   - shellcheck $TRAVIS_BUILD_DIR/syncin.sh
+  - shfmt -i 2 -d -p -ci $TRAVIS_BUILD_DIR/sync.sh
+  - shfmt -i 2 -d -p -ci $TRAVIS_BUILD_DIR/syncin.sh
