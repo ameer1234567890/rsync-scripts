@@ -1,5 +1,5 @@
 #!/bin/sh
-rsync rsync://miwifimini/usb1/USB_NOT_MOUNTED >/dev/null 2>&1
+rsync rsync://192.168.7.1/usb1/USB_NOT_MOUNTED >/dev/null 2>&1
 status="$?"
 if [ "$status" != 0 ]; then
   rsync -ahv --delete --progress --partial-dir=.rsync-partial --exclude-from /storage/emulated/0/Ameer/rsync-excludes.txt rsync://user@192.168.7.1/usb1/Phone/ /storage/emulated/0
