@@ -1,13 +1,14 @@
 #!/bin/sh
-rsync rsync://192.168.7.1/usb1/USB_NOT_MOUNTED >/dev/null 2>&1
+ifttt_key='YOUR_IFTTT_WEBHOOK_KEY_HERE'
+rsync rsync://192.168.100.44/usb1/USB_NOT_MOUNTED >/dev/null 2>&1
 status="$?"
 if [ "$status" != 0 ]; then
-  rsync -ahv --delete --progress --partial --partial-dir=.rsync-partial --backup --backup-dir="/Phone.old/backup_$(date +%Y-%m-%d)" --exclude-from /storage/emulated/0/Ameer/rsync-excludes.txt /storage/emulated/0/ rsync://user@192.168.7.1/usb1/Phone
+  rsync -ahv --delete --progress --partial --partial-dir=.rsync-partial --backup --backup-dir="/Phone.old/backup_$(date +%Y-%m-%d)" --exclude-from /storage/emulated/0/Ameer/rsync-excludes.txt /storage/emulated/0/ rsync://user@192.168.100.44/usb1/Phone
   status="$?"
   if [ "$status" != 0 ]; then
-    termux-notification --title "Error!" --content "An error occured during backup!"
+    curl -s -X POST https://maker.ifttt.com/trigger/rsyc_event/with/key/$ifttt_key --data 'value1=An+error+occured+during+backup!'
   else
-    termux-notification --title "Success" --content "Backup successful"
+    curl -s -X POST https://maker.ifttt.com/trigger/rsync_event/with/key/$ifttt_key --data 'value1=Backup+successful!'
   fi
 else
   echo "USB is not mounted at remote! Exiting..."
