@@ -2,7 +2,7 @@
 host="192.168.100.44"
 ifttt_key="YOUR_IFTTT_WEBHOOK_KEY_HERE"
 
-ping -w 3 -c 1 $host > /dev/null 2>&1
+ping -w 3 -c 1 $host >/dev/null 2>&1
 status="$?"
 if [ "$status" != 0 ]; then
   curl -s -X POST https://maker.ifttt.com/trigger/rsyc_event/with/key/$ifttt_key --data 'value1=Server+unavailable!'
