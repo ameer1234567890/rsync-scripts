@@ -4,7 +4,7 @@ host="192.168.100.44"
 rsync rsync://$host/usb1/USB_NOT_MOUNTED >/dev/null 2>&1
 status="$?"
 if [ "$status" != 0 ]; then
-  rsync -ahv --delete --progress --partial --partial-dir=.rsync-partial --exclude-from /storage/emulated/0/Ameer/rsync-excludes.txt rsync://user@$host/usb1/Phone/ /storage/emulated/0
+  rsync -ahv --delete --progress --stats --partial --partial-dir=.rsync-partial --exclude-from /storage/emulated/0/Ameer/rsync-excludes.txt rsync://user@$host/usb1/Phone/ /storage/emulated/0
   status="$?"
   if [ "$status" != 0 ]; then
     termux-notification --title "Error!" --content "An error occured during restore!"
