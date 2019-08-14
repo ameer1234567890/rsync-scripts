@@ -13,7 +13,7 @@ else
   rsync rsync://$host/usb1/USB_NOT_MOUNTED >/dev/null 2>&1
   status="$?"
   if [ "$status" != 0 ]; then
-    rsync -ahv --delete --progress --stats --partial --partial-dir=.rsync-partial --backup --backup-dir="/Ameer/Phone.old/backup_$(date +%Y-%m-%d_%H.%M.%S)" --exclude-from /storage/emulated/0/Ameer/rsync-excludes.txt /storage/emulated/0/ rsync://user@$host/usb1/Ameer/Phone
+    rsync -ahv --copy-links --delete --progress --stats --partial --partial-dir=.rsync-partial --backup --backup-dir="/Ameer/Phone.old/backup_$(date +%Y-%m-%d_%H.%M.%S)" --exclude-from /storage/emulated/0/Ameer/rsync-excludes.txt /storage/emulated/0/ rsync://user@$host/usb1/Ameer/Phone
     status="$?"
     if [ "$status" != 0 ]; then
       echo "An error occured during backup!"

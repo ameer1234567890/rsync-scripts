@@ -7,7 +7,7 @@ IF %STATUS% NEQ 0 GOTO :ERROR_NOSRV
 rsync rsync://%HOST%/usb1/USB_NOT_MOUNTED >nul 2>&1
 SET STATUS=%ERRORLEVEL%
 IF %STATUS% EQU 0 GOTO :ERROR_NOUSB
-IF %STATUS% NEQ 0 rsync -rhtv --delete --progress --stats --partial --fuzzy --delete-delay --modify-window=5 --partial-dir=.rsync-partial --backup --backup-dir="/Ameer/Laptop.old/backup_%DATE:~6,4%-%DATE:~3,2%-%DATE:~0,2%_%TIME:~0,2%.%TIME:~3,2%.%TIME:~6,2%" --exclude-from /cygdrive/d/Ameer/rsync-excludes.txt /cygdrive/d/ rsync://user@%HOST%/usb1/Ameer/Laptop
+IF %STATUS% NEQ 0 rsync -rhtv --copy-links --delete --progress --stats --partial --fuzzy --delete-delay --modify-window=5 --partial-dir=.rsync-partial --backup --backup-dir="/Ameer/Laptop.old/backup_%DATE:~6,4%-%DATE:~3,2%-%DATE:~0,2%_%TIME:~0,2%.%TIME:~3,2%.%TIME:~6,2%" --exclude-from /cygdrive/d/Ameer/rsync-excludes.txt /cygdrive/d/ rsync://user@%HOST%/usb1/Ameer/Laptop
 SET STATUS=%ERRORLEVEL%
 IF %STATUS% EQU 0 GOTO :SUCCESS
 IF %STATUS% NQU 0 GOTO :ERROR_NOBKP
