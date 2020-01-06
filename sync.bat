@@ -1,5 +1,9 @@
 @ECHO OFF
-if not DEFINED IS_MINIMIZED set IS_MINIMIZED=1 && start "" /min "%~dpnx0" %* && exit
+
+SET IS_SILENT=0
+IF "%1"=="/S" SET IS_SILENT=1
+
+IF %IS_SILENT% EQU 1 IF NOT DEFINED IS_MINIMIZED SET IS_MINIMIZED=1 && start "" /min "%~dpnx0" %* && EXIT
 
 SET HOST="miwifimini.lan"
 
@@ -15,8 +19,10 @@ IF %STATUS% EQU 0 GOTO :SUCCESS
 IF %STATUS% NQU 0 GOTO :ERRNOBKP
 
 :SUCCESS
+IF %IS_SILENT% EQU 1 EXIT
 powershell -Command "[void] [System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); $objNotifyIcon=New-Object System.Windows.Forms.NotifyIcon; $objNotifyIcon.BalloonTipText='Backup completed successfully!'; $objNotifyIcon.Icon=[system.drawing.systemicons]::'Information'; $objNotifyIcon.BalloonTipTitle='Backup'; $objNotifyIcon.BalloonTipIcon='Info'; $objNotifyIcon.Visible=$True; $objNotifyIcon.ShowBalloonTip(5000);"
-EXIT
+PAUSE
+GOTO :EOF
 
 :ERRNOBKP
 powershell -Command "[void] [System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); $objNotifyIcon=New-Object System.Windows.Forms.NotifyIcon; $objNotifyIcon.BalloonTipText='An error occured during backup! Please try again later!'; $objNotifyIcon.Icon=[system.drawing.systemicons]::'Error'; $objNotifyIcon.BalloonTipTitle='Backup'; $objNotifyIcon.BalloonTipIcon='Error'; $objNotifyIcon.Visible=$True; $objNotifyIcon.ShowBalloonTip(5000);"
