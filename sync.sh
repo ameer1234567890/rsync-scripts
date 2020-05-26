@@ -1,5 +1,5 @@
 #!/bin/sh
-host="192.168.100.44"
+host="192.168.100.71"
 logger="/system/bin/log -t sync"
 
 log() {
