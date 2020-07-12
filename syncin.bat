@@ -1,5 +1,5 @@
 @ECHO OFF
-SET HOST="miwifimini.lan"
+SET HOST="nas1.lan"
 
 :menu
 CHOICE /C YN /M "Are you sure you want to sync data in:" 
