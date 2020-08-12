@@ -3,8 +3,6 @@
 SET IS_SILENT=0
 IF "%1"=="/S" SET IS_SILENT=1
 
-IF %IS_SILENT% EQU 1 IF NOT DEFINED IS_MINIMIZED SET IS_MINIMIZED=1 && start "" /min "%~dpnx0" %* && EXIT
-
 SET HOST="nas1.lan"
 
 PING -w 3 %HOST% >nul 2>&1
