@@ -1,3 +1,5 @@
-Set objShell = WScript.CreateObject("WScript.Shell")
-objShell.Run "CMD /C START /MIN " & CreateObject("Scripting.FileSystemObject").GetParentFolderName(WScript.ScriptFullName) & "\sync.bat /S", 7
-Set objShell = Nothing
+Dim objShell, objFSO
+Set objShell = CreateObject("WScript.Shell")
+Set objFSO = CreateObject("Scripting.FileSystemObject")
+
+objShell.Run "CMD /C START /MIN " & objFSO.GetParentFolderName(WScript.ScriptFullName) & "\sync.bat /S", 7
