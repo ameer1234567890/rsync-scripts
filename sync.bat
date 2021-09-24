@@ -18,18 +18,21 @@ IF %STATUS% EQU 0 GOTO :SUCCESS
 IF %STATUS% NEQ 0 GOTO :ERRNOBKP
 
 :SUCCESS
+powershell -Command "Write-EventLog -LogName Application -Source SysAdmin -EntryType Information -Message 'Backup completed successfully!' -EventId 1"
 IF %IS_SILENT% EQU 1 EXIT
 powershell -Command "[void] [System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); $objNotifyIcon=New-Object System.Windows.Forms.NotifyIcon; $objNotifyIcon.BalloonTipText='Backup completed successfully!'; $objNotifyIcon.Icon=[system.drawing.systemicons]::'Information'; $objNotifyIcon.BalloonTipTitle='Backup'; $objNotifyIcon.BalloonTipIcon='Info'; $objNotifyIcon.Visible=$True; $objNotifyIcon.ShowBalloonTip(5000);"
 PAUSE
 GOTO :EOF
 
 :ERRNOBKP
+powershell -Command "Write-EventLog -LogName Application -Source SysAdmin -EntryType Error -Message 'An error occured during backup!' -EventId 1"
 powershell -Command "[void] [System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); $objNotifyIcon=New-Object System.Windows.Forms.NotifyIcon; $objNotifyIcon.BalloonTipText='An error occured during backup! Please try again later!'; $objNotifyIcon.Icon=[system.drawing.systemicons]::'Error'; $objNotifyIcon.BalloonTipTitle='Backup'; $objNotifyIcon.BalloonTipIcon='Error'; $objNotifyIcon.Visible=$True; $objNotifyIcon.ShowBalloonTip(5000);"
 IF %IS_SILENT% EQU 1 EXIT
 PAUSE
 GOTO :EOF
 
 :ERRNOSRV
+powershell -Command "Write-EventLog -LogName Application -Source SysAdmin -EntryType Error -Message 'Backup server unavailable!' -EventId 1"
 ECHO "Backup server unavailable! Exiting..."
 powershell -Command "[void] [System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); $objNotifyIcon=New-Object System.Windows.Forms.NotifyIcon; $objNotifyIcon.BalloonTipText='Backup server unavailable! Please try again later!'; $objNotifyIcon.Icon=[system.drawing.systemicons]::'Error'; $objNotifyIcon.BalloonTipTitle='Backup'; $objNotifyIcon.BalloonTipIcon='Error'; $objNotifyIcon.Visible=$True; $objNotifyIcon.ShowBalloonTip(5000);"
 IF %IS_SILENT% EQU 1 EXIT
@@ -37,6 +40,7 @@ PAUSE
 GOTO :EOF
 
 :ERRNOUSB
+powershell -Command "Write-EventLog -LogName Application -Source SysAdmin -EntryType Error -Message 'USB is not mounted at remote!' -EventId 1"
 ECHO "USB is not mounted at remote! Exiting..."
 powershell -Command "[void] [System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); $objNotifyIcon=New-Object System.Windows.Forms.NotifyIcon; $objNotifyIcon.BalloonTipText='USB is not mounted at remote! Please try again later!'; $objNotifyIcon.Icon=[system.drawing.systemicons]::'Error'; $objNotifyIcon.BalloonTipTitle='Backup'; $objNotifyIcon.BalloonTipIcon='Error'; $objNotifyIcon.Visible=$True; $objNotifyIcon.ShowBalloonTip(5000);"
 IF %IS_SILENT% EQU 1 EXIT
