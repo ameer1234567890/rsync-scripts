@@ -4,6 +4,7 @@ SET IS_SILENT=0
 IF "%1"=="/S" SET IS_SILENT=1
 
 SET HOST="nas1.lan"
+SET USER="Ameer/Laptop"
 
 PING -w 3 %HOST% >nul 2>&1
 SET STATUS=%ERRORLEVEL%
@@ -11,8 +12,12 @@ IF %STATUS% NEQ 0 GOTO :ERRNOSRV
 rsync rsync://%HOST%/usb1/USB_NOT_MOUNTED >nul 2>&1
 SET STATUS=%ERRORLEVEL%
 IF %STATUS% EQU 0 GOTO :ERRNOUSB
-SET TIMESTAMP=backup_%DATE:~6,4%-%DATE:~3,2%-%DATE:~0,2%_%TIME:~0,2%.%TIME:~3,2%.%TIME:~6,2%
-IF %STATUS% NEQ 0 rsync -rhtv --copy-links --delete --progress --stats --partial --fuzzy --delete-delay --modify-window=5 --partial-dir=.rsync-partial --backup --backup-dir="/Ameer/Laptop.old/%TIMESTAMP: =0%" --exclude-from /cygdrive/d/Ameer/rsync-excludes.txt /cygdrive/d/ rsync://%HOST%/usb1/Ameer/Laptop
+powershell ^(Get-Date^).ToString('yyyy-MM-dd_hh.mm.ss') > %~dp0\timestamp.txt
+SET /P TIMESTAMP=<%~dp0\timestamp.txt
+DEL %~dp0\timestamp.txt
+SET TIMESTAMP=backup_%TIMESTAMP%
+
+IF %STATUS% NEQ 0 rsync -rhtv --copy-links --delete --progress --stats --partial --fuzzy --delete-delay --modify-window=5 --partial-dir=.rsync-partial --backup --backup-dir="/%USER%.old/%TIMESTAMP: =0%" --exclude-from /cygdrive/d/Ameer/rsync-excludes.txt /cygdrive/d/ rsync://%HOST%/usb1/%USER%
 SET STATUS=%ERRORLEVEL%
 IF %STATUS% EQU 0 GOTO :SUCCESS
 IF %STATUS% NEQ 0 GOTO :ERRNOBKP
