@@ -1,5 +1,5 @@
 #!/bin/sh
-host="192.168.100.71"
+host="192.168.100.128"
 
 rsync rsync://$host/usb1/USB_NOT_MOUNTED >/dev/null 2>&1
 status="$?"
