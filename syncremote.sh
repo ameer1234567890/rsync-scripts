@@ -1,5 +1,6 @@
 #!/bin/sh
 host="home.ameer.io"
+port=1022
 logger="/system/bin/log -t sync"
 
 log() {
@@ -13,10 +14,10 @@ status="$?"
 if [ "$status" != 0 ]; then
   log "e" "Server unavailable!"
 else
-  rsync -e 'ssh -p 1022' pi@$host:/mnt/usb1/USB_NOT_MOUNTED >/dev/null 2>&1
+  rsync -e "ssh -p $port" pi@$host:/mnt/usb1/USB_NOT_MOUNTED >/dev/null 2>&1
   status="$?"
   if [ "$status" != 0 ]; then
-    rsync -ahv -e 'ssh -p 1022' --copy-links --delete --progress --stats --partial --partial-dir=.rsync-partial --backup --backup-dir="/mnt/usb1/Ameer/OnePlusNordN10.old/backup_$(date +%Y-%m-%d_%H.%M.%S)" --exclude-from /storage/emulated/0/Ameer/rsync-excludes.txt /storage/emulated/0/ pi@$host:/mnt/usb1/Ameer/OnePlusNordN10
+    rsync -ahv -e "ssh -p $port" --copy-links --delete --progress --stats --partial --partial-dir=.rsync-partial --backup --backup-dir="/mnt/usb1/Ameer/OnePlusNordN10.old/backup_$(date +%Y-%m-%d_%H.%M.%S)" --exclude-from /storage/emulated/0/Ameer/rsync-excludes.txt /storage/emulated/0/ pi@$host:/mnt/usb1/Ameer/OnePlusNordN10
     status="$?"
     if [ "$status" != 0 ]; then
       log "e" "An error occured during backup!"

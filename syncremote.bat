@@ -9,7 +9,7 @@ SET PORT=1022
 PING -w 3 %HOST% >nul 2>&1
 SET STATUS=%ERRORLEVEL%
 IF %STATUS% NEQ 0 GOTO :ERRNOSRV
-rsync -e "ssh -p 1022" pi@%HOST%:/mnt/usb1/USB_NOT_MOUNTED >nul 2>&1
+rsync -e "ssh -p %PORT%" pi@%HOST%:/mnt/usb1/USB_NOT_MOUNTED >nul 2>&1
 SET STATUS=%ERRORLEVEL%
 IF %STATUS% EQU 0 GOTO :ERRNOUSB
 powershell ^(Get-Date^).ToString('yyyy-MM-dd_hh.mm.ss') > %~dp0\timestamp.txt
