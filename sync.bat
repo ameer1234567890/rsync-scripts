@@ -6,6 +6,9 @@ IF "%1"=="/S" SET IS_SILENT=1
 SET HOST="nas1.lan"
 SET USER="Ameer/Laptop"
 
+FOR /F "tokens=1-4 delims=:.," %%a in ("%time%") DO (
+  SET /A "START_T=(((%%a*60)+1%%b %% 100)*60+1%%c %% 100)*100+1%%d %% 100"
+)
 PING -w 3 %HOST% >nul 2>&1
 SET STATUS=%ERRORLEVEL%
 IF %STATUS% NEQ 0 GOTO :ERRNOSRV
@@ -19,35 +22,35 @@ SET TIMESTAMP=backup_%TIMESTAMP%
 
 IF %STATUS% NEQ 0 rsync -rhtv --copy-links --delete --progress --stats --partial --fuzzy --delete-delay --modify-window=5 --partial-dir=.rsync-partial --backup --backup-dir="/%USER%.old/%TIMESTAMP: =0%" --exclude-from /cygdrive/d/Ameer/rsync-excludes.txt /cygdrive/d/ rsync://%HOST%/usb1/%USER%
 SET STATUS=%ERRORLEVEL%
+FOR /F "tokens=1-4 delims=:.," %%a in ("%time%") DO (
+  SET /A "END_T=(((%%a*60)+1%%b %% 100)*60+1%%c %% 100)*100+1%%d %% 100"
+)
+SET /A RUN_T=(END_T-START_T)*10
 IF %STATUS% EQU 0 GOTO :SUCCESS
 IF %STATUS% NEQ 0 GOTO :ERRNOBKP
 
 :SUCCESS
-powershell -Command "Write-EventLog -LogName Application -Source SysAdmin -EntryType Information -Message 'Backup completed successfully!' -EventId 1"
+curl -k "https://printer.lan:5001/api/push/qHGaU0Xg2q?status=up&msg=OK&ping=%RUN_T%"
 IF %IS_SILENT% EQU 1 EXIT
-powershell -Command "[void] [System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); $objNotifyIcon=New-Object System.Windows.Forms.NotifyIcon; $objNotifyIcon.BalloonTipText='Backup completed successfully!'; $objNotifyIcon.Icon=[system.drawing.systemicons]::'Information'; $objNotifyIcon.BalloonTipTitle='Backup'; $objNotifyIcon.BalloonTipIcon='Info'; $objNotifyIcon.Visible=$True; $objNotifyIcon.ShowBalloonTip(5000);"
 PAUSE
 GOTO :EOF
 
 :ERRNOBKP
-powershell -Command "Write-EventLog -LogName Application -Source SysAdmin -EntryType Error -Message 'An error occured during backup!' -EventId 1"
-powershell -Command "[void] [System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); $objNotifyIcon=New-Object System.Windows.Forms.NotifyIcon; $objNotifyIcon.BalloonTipText='An error occured during backup! Please try again later!'; $objNotifyIcon.Icon=[system.drawing.systemicons]::'Error'; $objNotifyIcon.BalloonTipTitle='Backup'; $objNotifyIcon.BalloonTipIcon='Error'; $objNotifyIcon.Visible=$True; $objNotifyIcon.ShowBalloonTip(5000);"
+curl -k "https://printer.lan:5001/api/push/qHGaU0Xg2q?status=down&msg=Error:+%STATUS%&ping=%RUN_T%"
 IF %IS_SILENT% EQU 1 EXIT
 PAUSE
 GOTO :EOF
 
 :ERRNOSRV
-powershell -Command "Write-EventLog -LogName Application -Source SysAdmin -EntryType Error -Message 'Backup server unavailable!' -EventId 1"
 ECHO "Backup server unavailable! Exiting..."
-powershell -Command "[void] [System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); $objNotifyIcon=New-Object System.Windows.Forms.NotifyIcon; $objNotifyIcon.BalloonTipText='Backup server unavailable! Please try again later!'; $objNotifyIcon.Icon=[system.drawing.systemicons]::'Error'; $objNotifyIcon.BalloonTipTitle='Backup'; $objNotifyIcon.BalloonTipIcon='Error'; $objNotifyIcon.Visible=$True; $objNotifyIcon.ShowBalloonTip(5000);"
+curl -k "https://printer.lan:5001/api/push/qHGaU0Xg2q?status=down&msg=Error:+Server+unavailable&ping=0"
 IF %IS_SILENT% EQU 1 EXIT
 PAUSE
 GOTO :EOF
 
 :ERRNOUSB
-powershell -Command "Write-EventLog -LogName Application -Source SysAdmin -EntryType Error -Message 'USB is not mounted at remote!' -EventId 1"
 ECHO "USB is not mounted at remote! Exiting..."
-powershell -Command "[void] [System.Reflection.Assembly]::LoadWithPartialName('System.Windows.Forms'); $objNotifyIcon=New-Object System.Windows.Forms.NotifyIcon; $objNotifyIcon.BalloonTipText='USB is not mounted at remote! Please try again later!'; $objNotifyIcon.Icon=[system.drawing.systemicons]::'Error'; $objNotifyIcon.BalloonTipTitle='Backup'; $objNotifyIcon.BalloonTipIcon='Error'; $objNotifyIcon.Visible=$True; $objNotifyIcon.ShowBalloonTip(5000);"
+curl -k "https://printer.lan:5001/api/push/qHGaU0Xg2q?status=down&msg=Error:+USB+not+mounted&ping=0"
 IF %IS_SILENT% EQU 1 EXIT
 PAUSE
 GOTO :EOF
