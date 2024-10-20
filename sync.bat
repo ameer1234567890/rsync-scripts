@@ -25,7 +25,7 @@ SET STATUS=%ERRORLEVEL%
 FOR /F "tokens=1-4 delims=:.," %%a in ("%time%") DO (
   SET /A "END_T=(((%%a*60)+1%%b %% 100)*60+1%%c %% 100)*100+1%%d %% 100"
 )
-SET /A RUN_T=(END_T-START_T)*10
+SET /A RUN_T=(END_T-START_T)/100
 IF %STATUS% EQU 0 GOTO :SUCCESS
 IF %STATUS% NEQ 0 GOTO :ERRNOBKP
 
