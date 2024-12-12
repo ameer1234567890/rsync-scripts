@@ -1,8 +1,5 @@
 #!/bin/bash
 
-shopt -s expand_aliases
-alias curl='curl --dns-servers 192.168.100.1'
-
 host="nas1.lan"
 logger="/system/bin/log -t sync"
 
@@ -12,6 +9,12 @@ log() {
   #termux-notification --title 'rsync' --content "$2"
 }
 
+ping -c 1 gadhamoo.lan > /dev/null 2>&1
+status="$?"
+if [ "$status" != 0 ]; then
+  vpnrequired=true
+  am broadcast -n com.tailscale.ipn/.IPNReceiver -a com.tailscale.ipn.CONNECT_VPN
+fi
 ping -w 3 -c 1 $host >/dev/null 2>&1
 status="$?"
 if [ "$status" != 0 ]; then
@@ -34,4 +37,8 @@ else
     log "e" "USB is not mounted at remote!"
     curl -k "https://printer.lan:5001/api/push/tdWHLN5ZQ7?status=down&msg=Error:+USB+not+mounted&ping="
   fi
+fi
+
+if [ $vpnrequired ]; then
+  am broadcast -n com.tailscale.ipn/.IPNReceiver -a com.tailscale.ipn.DISCONNECT_VPN
 fi
