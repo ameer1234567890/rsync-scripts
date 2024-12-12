@@ -14,6 +14,7 @@ status="$?"
 if [ "$status" != 0 ]; then
   vpnrequired=true
   am broadcast -n com.tailscale.ipn/.IPNReceiver -a com.tailscale.ipn.CONNECT_VPN
+  sleep 5
 fi
 ping -w 3 -c 1 $host >/dev/null 2>&1
 status="$?"
