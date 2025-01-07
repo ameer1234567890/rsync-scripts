@@ -1,6 +1,10 @@
 #!/bin/bash
 
 host="nas1.lan"
+backup_usb="usb1"
+this_device="Ameer/OnePlusNordCE3"
+uptime_kuma_host="printer.lan:5001"
+uptime_kuma_slug="tdWHLN5ZQ7"
 logger="/system/bin/log -t sync"
 
 log() {
@@ -20,23 +24,23 @@ ping -w 3 -c 1 $host >/dev/null 2>&1
 status="$?"
 if [ "$status" != 0 ]; then
   log "e" "Server unavailable!"
-  curl -k "https://printer.lan:5001/api/push/tdWHLN5ZQ7?status=down&msg=Error:+Server+unavailable&ping="
+  curl -k "https://$uptime_kuma_host/api/push/$uptime_kuma_slug?status=down&msg=Error:+Server+unavailable&ping="
 else
-  rsync rsync://$host/usb1/USB_NOT_MOUNTED >/dev/null 2>&1
+  rsync rsync://$host/$backup_usb/USB_NOT_MOUNTED >/dev/null 2>&1
   status="$?"
   if [ "$status" != 0 ]; then
-    rsync -ahv --copy-links --delete --progress --stats --partial --partial-dir=.rsync-partial --backup --backup-dir="/Ameer/OnePlusNordCE3.old/backup_$(date +%Y-%m-%d_%H.%M.%S)" --exclude-from /storage/emulated/0/Ameer/rsync-excludes.txt /storage/emulated/0/ rsync://$host/usb1/Ameer/OnePlusNordCE3
+    rsync -ahv --copy-links --delete --progress --stats --partial --partial-dir=.rsync-partial --backup --backup-dir="/$this_device.old/backup_$(date +%Y-%m-%d_%H.%M.%S)" --exclude-from /storage/emulated/0/Ameer/rsync-excludes.txt /storage/emulated/0/ rsync://$host/$backup_usb/$this_device
     status="$?"
     if [ "$status" != 0 ]; then
       log "e" "An error occured during backup!"
-      curl -k "https://printer.lan:5001/api/push/tdWHLN5ZQ7?status=down&msg=Error:+$status&ping="
+      curl -k "https://$uptime_kuma_host/api/push/$uptime_kuma_slug?status=down&msg=Error:+$status&ping="
     else
       log "i" "Backup successful!"
-      curl -k "https://printer.lan:5001/api/push/tdWHLN5ZQ7?status=up&msg=OK&ping="
+      curl -k "https://$uptime_kuma_host/api/push/$uptime_kuma_slug?status=up&msg=OK&ping="
     fi
   else
     log "e" "USB is not mounted at remote!"
-    curl -k "https://printer.lan:5001/api/push/tdWHLN5ZQ7?status=down&msg=Error:+USB+not+mounted&ping="
+    curl -k "https://$uptime_kuma_host/api/push/$uptime_kuma_slug?status=down&msg=Error:+USB+not+mounted&ping="
   fi
 fi
 
