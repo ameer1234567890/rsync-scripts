@@ -5,6 +5,8 @@ IF "%1"=="/S" SET IS_SILENT=1
 
 SET HOST="nas1.lan"
 SET USER="Ameer/Laptop"
+SET UPTIME_KUMA_HOST="printer.lan:3001"
+SET UPTIME_KUMA_SLUG="ghQTMSZb2ApAlbUsVHIyFGLmVlGCZEQt"
 
 FOR /F "tokens=1-4 delims=:.," %%a in ("%time%") DO (
   SET /A "START_T=(((%%a*60)+1%%b %% 100)*60+1%%c %% 100)*100+1%%d %% 100"
@@ -30,27 +32,27 @@ IF %STATUS% EQU 0 GOTO :SUCCESS
 IF %STATUS% NEQ 0 GOTO :ERRNOBKP
 
 :SUCCESS
-curl -k "https://printer.lan:5001/api/push/qHGaU0Xg2q?status=up&msg=OK&ping=%RUN_T%"
+curl -k "https://%UPTIME_KUMA_HOST%/api/push/%UPTIME_KUMA_SLUG%?status=up&msg=OK&ping=%RUN_T%"
 IF %IS_SILENT% EQU 1 EXIT
 PAUSE
 GOTO :EOF
 
 :ERRNOBKP
-curl -k "https://printer.lan:5001/api/push/qHGaU0Xg2q?status=down&msg=Error:+%STATUS%&ping=%RUN_T%"
+curl -k "https://%UPTIME_KUMA_HOST%/api/push/%UPTIME_KUMA_SLUG%?status=down&msg=Error:+%STATUS%&ping=%RUN_T%"
 IF %IS_SILENT% EQU 1 EXIT
 PAUSE
 GOTO :EOF
 
 :ERRNOSRV
 ECHO "Backup server unavailable! Exiting..."
-curl -k "https://printer.lan:5001/api/push/qHGaU0Xg2q?status=down&msg=Error:+Server+unavailable&ping=0"
+curl -k "https://%UPTIME_KUMA_HOST%/api/push/%UPTIME_KUMA_SLUG%?status=down&msg=Error:+Server+unavailable&ping=0"
 IF %IS_SILENT% EQU 1 EXIT
 PAUSE
 GOTO :EOF
 
 :ERRNOUSB
 ECHO "USB is not mounted at remote! Exiting..."
-curl -k "https://printer.lan:5001/api/push/qHGaU0Xg2q?status=down&msg=Error:+USB+not+mounted&ping=0"
+curl -k "https://%UPTIME_KUMA_HOST%/api/push/%UPTIME_KUMA_SLUG%?status=down&msg=Error:+USB+not+mounted&ping=0"
 IF %IS_SILENT% EQU 1 EXIT
 PAUSE
 GOTO :EOF
