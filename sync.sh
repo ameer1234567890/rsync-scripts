@@ -3,8 +3,8 @@
 host="nas1.lan"
 backup_usb="usb1"
 this_device="Ameer/OnePlusNordCE3"
-uptime_kuma_host="printer.lan:5001"
-uptime_kuma_slug="tdWHLN5ZQ7"
+uptime_kuma_host="printer.lan:3001"
+uptime_kuma_slug="hdNaLPFVI1uGFAHQwOswARI7w2OhCMQg"
 logger="/system/bin/log -t sync"
 
 log() {
